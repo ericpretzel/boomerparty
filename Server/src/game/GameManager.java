@@ -19,7 +19,7 @@ public class GameManager implements Runnable {
         Player player = new Player(client.username);
         game.players.add(player);
         clients.put(player, client);
-        sendToAll();
+        broadcast();
     }
 
     public void removePlayer(ClientHandler client) {
@@ -31,7 +31,7 @@ public class GameManager implements Runnable {
             game.players.remove(player);
         }
         //clients.put(player, null);
-        sendToAll();
+        broadcast();
     }
 
     public void run() {
@@ -41,7 +41,7 @@ public class GameManager implements Runnable {
 
         startNewTimer();
 
-        sendToAll();
+        broadcast();
     }
 
     void startNewTimer() {
@@ -55,7 +55,7 @@ public class GameManager implements Runnable {
                 game.soundToPlay = Globals.LOSE_SOUND;
                 nextPlayer();
             }
-            sendToAll();
+            broadcast();
         }, 0, 1, TimeUnit.SECONDS);
         new Thread(() -> {
             final ClientHandler client = clients.get(currentPlayer).get(0);
@@ -72,7 +72,7 @@ public class GameManager implements Runnable {
                 } else {
                     game.soundToPlay = Globals.INVALID_WORD_SOUND;
                 }
-                sendToAll();
+                broadcast();
             }
         }).start();
     }
@@ -90,10 +90,10 @@ public class GameManager implements Runnable {
 
             startNewTimer();
         }
-        sendToAll();
+        broadcast();
     }
 
-    synchronized void sendToAll() {
+    synchronized void broadcast() {
         for (Player p : clients.getKeys()) {
             ClientHandler client = clients.get(p).get(0);
             client.send(game);

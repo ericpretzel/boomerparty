@@ -8,8 +8,10 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class ServerThread extends Thread {
 
@@ -17,7 +19,7 @@ public class ServerThread extends Thread {
     protected final GameManager gm = new GameManager();
     private final ServerUI display = new ServerUI(this);
 
-    public ServerThread(int portNumber) {
+    public ServerThread(int portNumber) throws UnknownHostException {
         this.portNumber = portNumber;
 
         JFrame fr = new JFrame("Server (port " + portNumber + ")");
@@ -35,14 +37,13 @@ public class ServerThread extends Thread {
         fr.setLocationRelativeTo(null);
         fr.setVisible(true);
 
-        Logger.log("New server started on port " + portNumber);
+        Logger.log("new server started on port " + portNumber + " with ip " + InetAddress.getLocalHost().getHostAddress());
     }
 
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
-                Logger.log("New connection...");
                 ClientHandler client = new ClientHandler(socket);
 
                 //check for duplicate usernames.
@@ -50,14 +51,15 @@ public class ServerThread extends Thread {
                 for (Player player : gm.game.players) {
                     if (player.username.equals(client.username)) {
                         duplicate = true;
-                        Logger.log("Client has duplicate username: \"" + client.username + "\"");
+                        Logger.log("a client attempted to connect with duplicate username: \"" + client.username + "\"");
                         break;
                     }
                 }
                 if (!duplicate) {
-                    Logger.log("Player joined as \"" + client.username + "\"");
+                    Logger.log("new client connection: " + client.toString());
                     gm.addPlayer(client);
                 } else {
+                    client.send(gm.game);
                     client.disconnect();
                 }
             }

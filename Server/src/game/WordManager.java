@@ -75,7 +75,6 @@ public class WordManager {
             while (promptQueue.size() < 3)
                 generatePrompt();
         }).start();
-        Logger.log("Prompt: " + promptQueue.get(0));
         return promptQueue.get(0);
     }
 

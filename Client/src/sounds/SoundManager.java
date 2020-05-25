@@ -24,7 +24,7 @@ public class SoundManager {
             clip.open(AudioSystem.getAudioInputStream(sound));
             clip.start();
         } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-            Logger.log("error occurred when trying to play \"" + path + "\"");
+            Logger.log("could not play sound \"" + path + "\"");
             e.printStackTrace();
         }
     }

@@ -37,7 +37,6 @@ public class ClientManager {
                 if (JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?",
                         "Exit", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     disconnect();
-                    System.exit(0);
                 }
             }
         });
@@ -50,18 +49,25 @@ public class ClientManager {
     }
 
     public void connect() throws IOException {
-        Socket server = new Socket(ip, portNumber);
-        Logger.log("Connected");
+        Socket server = null;
+        try {
+            server = new Socket(ip, portNumber);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Could not connect to server.");
+            System.exit(0);
+        }
+
+        Logger.log("successfully connected to server " + ip + " on port " + portNumber);
 
         out = new ObjectOutputStream(server.getOutputStream());
         in = new ObjectInputStream(server.getInputStream());
+
+        Logger.log("sending username");
         send(username);
 
         Thread receiving = new Thread(() -> {
             while (true) {
-                Logger.log("Waiting for game...");
                 Game game = (Game) receive();
-                Logger.log(game.toString());
                 //update game info
                 this.game.players = game.players;
                 this.game.prompt = game.prompt;
@@ -72,6 +78,7 @@ public class ClientManager {
 
                 sc.updateInfo();
             }
+
         });
         receiving.start();
     }
@@ -80,6 +87,7 @@ public class ClientManager {
         try {
             out.close();
             in.close();
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,20 +96,27 @@ public class ClientManager {
     public void send(String word) {
         try {
             out.writeUTF(word);
-            Logger.log("Sent " + word);
+            Logger.log("sent: " + word);
             out.reset();
             out.flush();
         } catch (IOException e) {
+            Logger.log("IO error occurred when trying to send word");
             e.printStackTrace();
         }
     }
 
     public Object receive() {
         try {
-            return in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+            Object obj = in.readObject();
+            Logger.log("received: " + obj.toString());
+            return obj;
+        } catch (IOException e) {
+            Logger.log("IO error occurred when trying to receive game");
             e.printStackTrace();
-            return null;
+        } catch (ClassNotFoundException e) {
+            Logger.log("can't find class");
+            e.printStackTrace();
         }
+        return null;
     }
 }

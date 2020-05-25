@@ -23,7 +23,7 @@ public class ClientHandler {
     }
 
     public void disconnect() {
-        Logger.log("Client \"" + username + "\" disconnected");
+        Logger.log("\"" + username + "\" has disconnected");
         try {
             out.close();
             in.close();
@@ -35,21 +35,31 @@ public class ClientHandler {
 
     public String receive() {
         try {
-            return in.readUTF();
+            String str = in.readUTF();
+            Logger.log("received from \"" + (username == null ? "(no username)" : username) + "\": " + str);
+            return str;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public void send(Object o) {
+    public void send(Object obj) {
         try {
-            out.writeObject(o);
-            Logger.log("Sent: " + o);
+            out.writeObject(obj);
+            Logger.log("sent to \"" + (username == null ? "(no username)" : username) + "\": " + obj.toString());
             out.reset();
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ClientHandler{" +
+                "username='" + username + '\'' +
+                ", socket=" + socket +
+                '}';
     }
 }

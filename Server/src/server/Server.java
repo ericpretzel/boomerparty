@@ -1,9 +1,10 @@
 package server;
 
 import javax.swing.*;
+import java.net.UnknownHostException;
 
 public class Server {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnknownHostException {
         JPanel portPanel = new JPanel();
 
         portPanel.add(new JLabel("Port:"));
