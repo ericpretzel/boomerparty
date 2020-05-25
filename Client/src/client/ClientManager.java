@@ -68,8 +68,7 @@ public class ClientManager {
                 this.game.timer = game.timer;
                 this.game.isRunning = game.isRunning;
 
-                if (!game.soundToPlay.equals(""))
-                    SoundManager.playSound(game.soundToPlay);
+                SoundManager.playSound(game.soundToPlay);
 
                 sc.updateInfo();
             }

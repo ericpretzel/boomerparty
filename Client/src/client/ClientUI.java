@@ -2,6 +2,7 @@ package client;
 
 import game.Player;
 import images.ImageManager;
+import util.Globals;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -77,7 +78,7 @@ public class ClientUI extends JPanel {
             JPanel health = new JPanel(new FlowLayout(FlowLayout.CENTER));
             health.setBorder(new TitledBorder("Health"));
             for (int i = 1; i <= 3; i++) {
-                String path = (player.health >= i ? ImageManager.FULL_HEART : ImageManager.EMPTY_HEART);
+                String path = (player.health >= i ? Globals.FULL_HEART_IMAGE : Globals.EMPTY_HEART_IMAGE);
                 JLabel label = new JLabel(new ImageIcon(ImageManager.getImage(path)));
                 health.add(label);
             }

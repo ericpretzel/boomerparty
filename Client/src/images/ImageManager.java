@@ -9,8 +9,6 @@ import java.util.Objects;
 
 public class ImageManager {
     private static final HashMap<String, BufferedImage> map = new HashMap<>();
-    public static String FULL_HEART = "full_heart.png";
-    public static String EMPTY_HEART = "empty_heart.png";
 
     private ImageManager() {
     }

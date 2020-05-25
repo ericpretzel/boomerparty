@@ -1,6 +1,7 @@
 package game;
 
 import server.ClientHandler;
+import util.Globals;
 import util.HashMap;
 import util.Logger;
 
@@ -51,6 +52,7 @@ public class GameManager implements Runnable {
             if (game.timer < 0) {
                 timer.shutdownNow();
                 currentPlayer.health--;
+                game.soundToPlay = Globals.LOSE_SOUND;
                 nextPlayer();
             }
             sendToAll();
@@ -64,7 +66,11 @@ public class GameManager implements Runnable {
                 currentPlayer.playedWord = word;
                 if (wm.check(word)) {
                     timer.shutdownNow();
+                    game.soundToPlay = Globals.VALID_WORD_SOUND;
                     nextPlayer();
+                    return;
+                } else {
+                    game.soundToPlay = Globals.INVALID_WORD_SOUND;
                 }
                 sendToAll();
             }
@@ -91,6 +97,7 @@ public class GameManager implements Runnable {
         for (Player p : clients.getKeys()) {
             ClientHandler client = clients.get(p).get(0);
             client.send(game);
+            game.soundToPlay = "";
         }
     }
 }
