@@ -204,7 +204,7 @@ public class Tree<E extends Comparable<E>> implements java.io.Serializable, Iter
     }
 
     public Iterator<E> iterator() {
-        return new Iterator<>() {
+        return new Iterator<E>() {
             private final Node last = highestNode(root);
             private Node current = null;
 

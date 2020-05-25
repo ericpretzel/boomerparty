@@ -128,7 +128,7 @@ public class DLList<E> implements Iterable<E>, java.io.Serializable {
     }
 
     public Iterator<E> iterator() {
-        return new Iterator<>() {
+        return new Iterator<E>() {
             private Node node = dummy;
 
             public boolean hasNext() {

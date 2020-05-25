@@ -53,7 +53,7 @@ public class HashTable<E> implements Iterable<E> {
     }
 
     public Iterator<E> iterator() {
-        return new Iterator<>() {
+        return new Iterator<E>() {
 
             int t = 0;
             Iterator<E> l = table[t] == null ? null : table[t].iterator();
