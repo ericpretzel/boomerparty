@@ -14,6 +14,7 @@ public class InputManager extends KeyAdapter {
 
     public InputManager(ClientManager client) {
         textPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+        textPanel.setPreferredSize(textPanel.getSize());
         this.client = client;
     }
 

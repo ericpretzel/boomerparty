@@ -8,6 +8,6 @@ public class Globals {
     public static final String LOSE_SOUND = "lose.wav";
 
     //images
-    public static String FULL_HEART_IMAGE = "full_heart.png";
-    public static String EMPTY_HEART_IMAGE = "empty_heart.png";
+    public static final String FULL_HEART_IMAGE = "full_heart.png";
+    public static final String EMPTY_HEART_IMAGE = "empty_heart.png";
 }

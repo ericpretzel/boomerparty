@@ -38,10 +38,9 @@ public class GameManager implements Runnable {
         game.isRunning = true;
         game.prompt = wm.getPrompt();
         currentPlayer = game.players.get(0);
+        currentPlayer.myTurn = true;
 
         startNewTimer();
-
-        broadcast();
     }
 
     void startNewTimer() {
@@ -79,18 +78,21 @@ public class GameManager implements Runnable {
 
     void nextPlayer() {
         game.players.remove(currentPlayer);
+        currentPlayer.myTurn = false;
         if (currentPlayer.health > 0)
             game.players.add(currentPlayer);
 
         game.isRunning = game.players.size() >= 2;
         if (game.isRunning) {
             currentPlayer = game.players.get(0); //new currentPlayer
+            currentPlayer.myTurn = true;
             currentPlayer.playedWord = "";
             game.prompt = wm.getPrompt();
 
             startNewTimer();
+        } else {
+            broadcast();
         }
-        broadcast();
     }
 
     synchronized void broadcast() {

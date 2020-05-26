@@ -45,7 +45,7 @@ public class ClientManager {
         fr.setLocationRelativeTo(null);
         fr.setVisible(true);
 
-        game.players.add(new Player(this.username));
+        //game.players.add(new Player(this.username));
     }
 
     public void connect() throws IOException {
@@ -69,10 +69,7 @@ public class ClientManager {
             while (true) {
                 Game game = (Game) receive();
                 //update game info
-                this.game.players = game.players;
-                this.game.prompt = game.prompt;
-                this.game.timer = game.timer;
-                this.game.isRunning = game.isRunning;
+                this.game.copy(game);
 
                 SoundManager.playSound(game.soundToPlay);
 
