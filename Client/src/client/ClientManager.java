@@ -73,7 +73,7 @@ public class ClientManager {
 
                 SoundManager.playSound(game.soundToPlay);
 
-                sc.updateInfo();
+                SwingUtilities.invokeLater(sc::updateInfo);
             }
 
         });

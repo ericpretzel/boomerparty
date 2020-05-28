@@ -2,10 +2,10 @@ package game;
 
 import images.ImageManager;
 import util.Globals;
+import util.Tree;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.Objects;
 
@@ -15,6 +15,7 @@ public class Player implements java.io.Serializable {
     public int health;
     public String playedWord;
     public boolean myTurn;
+    public Tree<String> bonusLetters;
 
     private transient JPanel panel = null;
     private transient JLabel usernameLabel;
@@ -77,6 +78,7 @@ public class Player implements java.io.Serializable {
         this.health = player.health;
         this.playedWord = player.playedWord;
         this.myTurn = player.myTurn;
+        this.bonusLetters = player.bonusLetters;
     }
 
     public String toString() {
@@ -85,6 +87,7 @@ public class Player implements java.io.Serializable {
                 ", health=" + health +
                 ", playedWord='" + playedWord + '\'' +
                 ", myTurn=" + myTurn +
+                ", bonusLetters=" + bonusLetters +
                 '}';
     }
 
@@ -93,6 +96,7 @@ public class Player implements java.io.Serializable {
         this.health = 2;
         this.playedWord = "";
         this.myTurn = false;
+        bonusLetters = new Tree<>();
     }
 
     public boolean equals(Object o) {

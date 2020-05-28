@@ -66,6 +66,18 @@ public class GameManager implements Runnable {
                 if (wm.check(word)) {
                     timer.shutdownNow();
                     game.soundToPlay = Globals.VALID_WORD_SOUND;
+
+                    word.chars().forEach(c -> {
+                        String letter = String.valueOf((char)c);
+                        if (Globals.BONUS_LETTERS.contains(letter)) {
+                            currentPlayer.bonusLetters.add(letter);
+                        }
+                    });
+                    if (currentPlayer.bonusLetters.size() == Globals.BONUS_LETTERS.length()) {
+                        currentPlayer.health = Math.min(3, currentPlayer.health + 1);
+                        currentPlayer.bonusLetters.clear();
+                    }
+
                     nextPlayer();
                     return;
                 } else {

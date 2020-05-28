@@ -161,13 +161,16 @@ public class Tree<E extends Comparable<E>> implements java.io.Serializable, Iter
         return isBalanced(current.left) && isBalanced(current.right);
     }
 
+    public void clear() {
+        while (root != null)
+            this.remove(root.item);
+    }
 
     public void balance() {
         DLList<E> list = new DLList<>();
         for (E e : this)
             list.add(e);
-        while (root != null)
-            this.remove(root.item);
+        this.clear();
         balance(list, 0, list.size() - 1);
     }
 

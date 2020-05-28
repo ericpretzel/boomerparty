@@ -1,10 +1,12 @@
 package client;
 
 import game.Player;
+import util.Globals;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.PanelUI;
 import java.awt.*;
 
 public class ClientUI extends JPanel {
@@ -17,7 +19,9 @@ public class ClientUI extends JPanel {
 
     private final JPanel textPanel;
 
-    private final JLabel promptLabel;
+    private final JLabel promptLabel = new JLabel();
+
+    private final JPanel bonusLettersPanel = new JPanel(new GridLayout(0, 2));
 
     public ClientUI(ClientManager client) {
         super(new GridBagLayout());
@@ -30,8 +34,11 @@ public class ClientUI extends JPanel {
 
         this.textPanel = client.im.getTextPanel();
 
-        promptLabel = new JLabel();
+        playersPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
+        promptLabel.setBorder(new TitledBorder("Current Prompt"));
+
+        bonusLettersPanel.setBorder(new TitledBorder("Bonus Letters"));
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -44,12 +51,12 @@ public class ClientUI extends JPanel {
 
         c.gridy = 1;
         c.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.BOTH;
         c.weighty = 1;
 
         this.add(promptLabel, c);
 
         c.gridy = 2;
-        c.fill = GridBagConstraints.BOTH;
 
         this.add(playersPanel, c);
 
@@ -57,10 +64,18 @@ public class ClientUI extends JPanel {
 
         this.add(textPanel, c);
 
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridheight = 4;
+
+        this.add(bonusLettersPanel, c);
+
     }
 
     public void updateInfo() {
-        if (client.game.isRunning && client.game.currentPlayer().username.equals(client.username)) {
+        final Player myPlayer = client.game.getPlayer(client.username);
+
+        if (client.game.isRunning && myPlayer.myTurn) {
             textPanel.setBorder(new TitledBorder("Type an English word containing: " + client.game.prompt));
         } else {
             textPanel.setBorder(null);
@@ -75,6 +90,20 @@ public class ClientUI extends JPanel {
             playersPanel.add(player.getPanel());
             player.updatePanel();
         }
+
+        bonusLettersPanel.removeAll();
+        Globals.BONUS_LETTERS.chars().forEachOrdered(c -> {
+            String letter = String.valueOf((char)c);
+            boolean containsLetter = myPlayer.bonusLetters.contains(letter);
+            JLabel label = new JLabel(letter);
+            label.setOpaque(true);
+            label.setBackground(containsLetter ? Color.darkGray : Color.lightGray);
+            label.setForeground(containsLetter ? Color.lightGray : Color.black);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            label.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+            bonusLettersPanel.add(label);
+        });
+
         repaint();
         revalidate();
     }

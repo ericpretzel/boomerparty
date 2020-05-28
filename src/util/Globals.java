@@ -10,4 +10,6 @@ public class Globals {
     //images
     public static final String FULL_HEART_IMAGE = "full_heart.png";
     public static final String EMPTY_HEART_IMAGE = "empty_heart.png";
+
+    public static final String BONUS_LETTERS = "ABCDEFGHIJKLMNOPQRSTUV";
 }

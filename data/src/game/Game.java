@@ -38,6 +38,14 @@ public class Game implements java.io.Serializable {
         }
     }
 
+    public Player getPlayer(String username) {
+        for (Player player : players) {
+            if (player.username.equals(username))
+                return player;
+        }
+        return new Player("");
+    }
+
     public Player currentPlayer() {
         for (Player p : players)
             if (p.myTurn)
