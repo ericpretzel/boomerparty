@@ -1,7 +1,6 @@
 package client;
 
 import game.Game;
-import game.Player;
 import sounds.SoundManager;
 import util.Logger;
 
@@ -10,8 +9,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Objects;
 
 public class ClientManager {
 
@@ -22,7 +22,7 @@ public class ClientManager {
     private final int portNumber;
     private final ClientUI sc = new ClientUI(this);
 
-    private ObjectOutputStream out;
+    private PrintWriter out;
     private ObjectInputStream in;
 
     public ClientManager(String username, String ip, int portNumber) {
@@ -59,7 +59,7 @@ public class ClientManager {
 
         Logger.log("successfully connected to server " + ip + " on port " + portNumber);
 
-        out = new ObjectOutputStream(server.getOutputStream());
+        out = new PrintWriter(server.getOutputStream(), true);
         in = new ObjectInputStream(server.getInputStream());
 
         Logger.log("sending username");
@@ -91,15 +91,8 @@ public class ClientManager {
     }
 
     public void send(String word) {
-        try {
-            out.writeUTF(word);
-            Logger.log("sent: " + word);
-            out.reset();
-            out.flush();
-        } catch (IOException e) {
-            Logger.log("IO error occurred when trying to send word");
-            e.printStackTrace();
-        }
+        out.println(word);
+        Logger.log("sent: " + word);
     }
 
     public Object receive() {
@@ -115,5 +108,18 @@ public class ClientManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientManager that = (ClientManager) o;
+        return Objects.equals(username, that.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
 }

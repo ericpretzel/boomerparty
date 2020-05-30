@@ -7,7 +7,7 @@ public class Game implements java.io.Serializable {
     private static final long serialVersionUID = 1203810L;
 
     public boolean isRunning = false;
-    public DLList<Player> players = new DLList<>();
+    public final DLList<Player> players = new DLList<>();
     public String prompt = "";
     public int timer = 0;
 

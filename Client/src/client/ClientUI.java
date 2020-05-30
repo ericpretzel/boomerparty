@@ -6,7 +6,6 @@ import util.Globals;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.PanelUI;
 import java.awt.*;
 
 public class ClientUI extends JPanel {
@@ -37,6 +36,7 @@ public class ClientUI extends JPanel {
         playersPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
         promptLabel.setBorder(new TitledBorder("Current Prompt"));
+        promptLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         bonusLettersPanel.setBorder(new TitledBorder("Bonus Letters"));
 
@@ -78,6 +78,7 @@ public class ClientUI extends JPanel {
         if (client.game.isRunning && myPlayer.myTurn) {
             textPanel.setBorder(new TitledBorder("Type an English word containing: " + client.game.prompt));
         } else {
+            textPanel.removeAll();
             textPanel.setBorder(null);
         }
 

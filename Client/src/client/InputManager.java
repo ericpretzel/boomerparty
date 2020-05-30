@@ -30,8 +30,7 @@ public class InputManager extends KeyAdapter {
 
         //on enter: sends the word for the game to check if it is valid or not.
         else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            client.send(word);
-            this.word = "";
+            word = word.concat("!");
         }
 
         //on backspace: remove letter
@@ -39,6 +38,10 @@ public class InputManager extends KeyAdapter {
             if (word.length() > 0)
                 word = word.substring(0, word.length() - 1);
         }
+
+        client.send(word);
+        if (word.length() > 0 && word.charAt(word.length() - 1) == '!')
+            word = "";
 
         textPanel.removeAll();
 
