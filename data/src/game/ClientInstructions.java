@@ -2,7 +2,7 @@ package game;
 
 import javax.swing.*;
 
-public final class Instructions {
+public final class ClientInstructions {
 
     public static void show() {
         JPanel panel = new JPanel();

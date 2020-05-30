@@ -1,6 +1,6 @@
 package client;
 
-import game.Instructions;
+import game.ClientInstructions;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Client {
     public static void main(String[] args) throws IOException {
-        Instructions.show();
+        ClientInstructions.show();
 
         JPanel clientPanel = new JPanel();
 
