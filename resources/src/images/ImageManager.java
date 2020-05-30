@@ -23,6 +23,6 @@ public class ImageManager {
                 e.printStackTrace();
             }
         }
-        return cache.get(img).get(0);
+        return cache.get(img);
     }
 }
