@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WordManager {
 
@@ -27,7 +29,7 @@ public class WordManager {
         new BufferedReader(new InputStreamReader(WordManager.class.getResourceAsStream("words.txt")))
                 .lines()
                 .forEach(word -> {
-                    dictionary.add(word);
+                    dictionary.add(word.toUpperCase());
                     bar.setValue(bar.getValue() + 1);
                     bar.repaint();
                 });
@@ -52,7 +54,9 @@ public class WordManager {
     }
 
     public boolean check(String word) {
-        if (wordIsValid(word)) {
+        if (word.contains(promptQueue.get(0)) &&
+                !usedWords.contains(word) &&
+                dictionary.contains(word)) {
             Logger.log(word + " is valid");
             usedWords.add(word);
             promptQueue.remove(0);
@@ -62,31 +66,34 @@ public class WordManager {
         return false;
     }
 
-    private boolean wordIsValid(String word) {
-        return word.contains(promptQueue.get(0)) &&
-                !usedWords.contains(word) &&
-                dictionary.contains(word);
-    }
-
+    private final ExecutorService promptThreadPool = Executors.newFixedThreadPool(3);
     public String getPrompt() {
         if (promptQueue.size() == 0)
             generatePrompt();
-        new Thread(() -> {
-            while (promptQueue.size() < 3)
-                generatePrompt();
-        }).start();
+        for (int i = promptQueue.size(); i < 3; i++)
+            promptThreadPool.execute(this::generatePrompt);
         return promptQueue.get(0);
     }
 
+    public String getHint() {
+        for (String word : dictionary) {
+            if (word.contains(promptQueue.get(0)) && !usedWords.contains(word))
+                return word;
+        }
+        return "";
+    }
+
     private void generatePrompt() {
-        StringBuilder prompt;
+        String prompt;
         int promptLength = (int) (2 + Math.random() * 2);
         do {
-            prompt = new StringBuilder();
+            prompt = "";
             for (int i = 1; i <= promptLength; i++) {
-                prompt.append(alphabet.charAt((int) (Math.random() * alphabet.length())));
+                prompt = prompt.concat(String.valueOf(alphabet.charAt((int) (Math.random() * alphabet.length()))));
             }
-        } while (!promptIsValid(prompt.toString()));
-        promptQueue.add(prompt.toString());
+        } while (!promptIsValid(prompt));
+        synchronized(promptQueue) {
+            promptQueue.add(prompt);
+        }
     }
 }

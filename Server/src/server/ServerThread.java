@@ -17,12 +17,13 @@ public class ServerThread extends Thread {
 
     protected final int portNumber;
     protected final GameManager gm = new GameManager();
-    private final ServerUI display = new ServerUI(this);
 
     public ServerThread(int portNumber) throws UnknownHostException {
         this.portNumber = portNumber;
 
         JFrame fr = new JFrame("Server (port " + portNumber + ")");
+
+        ServerUI display = new ServerUI(this);
         fr.add(display);
         fr.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -48,7 +49,7 @@ public class ServerThread extends Thread {
 
                 //check for duplicate usernames.
                 boolean duplicate = false;
-                for (Player player : gm.game.players) {
+                for (Player player : gm.clients.getKeys()) {
                     if (player.username.equals(client.username)) {
                         duplicate = true;
                         Logger.log("a client attempted to connect with duplicate username: \"" + client.username + "\"");

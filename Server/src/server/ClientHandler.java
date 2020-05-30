@@ -2,9 +2,7 @@ package server;
 
 import util.Logger;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler {
@@ -12,12 +10,12 @@ public class ClientHandler {
     public final String username;
     private final Socket socket;
     private final ObjectOutputStream out;
-    private final ObjectInputStream in;
+    private final BufferedReader in;
 
     ClientHandler(Socket socket) throws IOException {
         this.socket = socket;
         out = new ObjectOutputStream(socket.getOutputStream());
-        in = new ObjectInputStream(socket.getInputStream());
+        in = new BufferedReader(new InputStreamReader((socket.getInputStream())));
         //this.send(new Game());
         this.username = this.receive();
     }
@@ -33,9 +31,24 @@ public class ClientHandler {
         }
     }
 
+    public boolean connected() {
+        return this.socket.isConnected();
+    }
+
+
+    public boolean ready() {
+        try {
+            return in.ready();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Logger.log("\"" + username + "\" is not ready :(");
+        }
+        return false;
+    }
+
     public String receive() {
         try {
-            String str = in.readUTF();
+            String str = in.readLine();
             Logger.log("received from \"" + (username == null ? "(no username)" : username) + "\": " + str);
             return str;
         } catch (IOException e) {
