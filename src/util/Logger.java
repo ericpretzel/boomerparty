@@ -32,7 +32,7 @@ public class Logger {
         String timestamp = new SimpleDateFormat("[HH:mm:ss] ").format(new Date());
         System.out.println(timestamp + toLog);
         log.append(timestamp).append(toLog).append("\n");
-        display.setText(getLog());
+        display.append(timestamp + toLog + "\n");
     }
 
     public static void log(Object toLog) {
