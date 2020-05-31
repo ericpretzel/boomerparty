@@ -16,8 +16,6 @@ public class ClientUI extends JPanel {
 
     private final JProgressBar timer = new JProgressBar(0, 10);
 
-    private final JPanel textPanel;
-
     private final JLabel promptLabel = new JLabel();
 
     private final JPanel bonusLettersPanel = new JPanel(new GridLayout(0, 2));
@@ -31,7 +29,7 @@ public class ClientUI extends JPanel {
 
         this.addKeyListener(client.im);
 
-        this.textPanel = client.im.getTextPanel();
+        JPanel textPanel = client.im.getTextPanel();
 
         playersPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
@@ -39,6 +37,15 @@ public class ClientUI extends JPanel {
         promptLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         bonusLettersPanel.setBorder(new TitledBorder("Bonus Letters"));
+        Globals.BONUS_LETTERS.chars().forEachOrdered(c -> {
+            JLabel label = new JLabel(String.valueOf((char)c));
+            label.setOpaque(true);
+            label.setBackground(Color.lightGray);
+            label.setForeground(Color.black);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            label.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+            bonusLettersPanel.add(label);
+        });
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -69,17 +76,15 @@ public class ClientUI extends JPanel {
         c.gridheight = 4;
 
         this.add(bonusLettersPanel, c);
-
     }
 
     public void updateInfo() {
         final Player myPlayer = client.game.getPlayer(client.username);
 
         if (client.game.isRunning && myPlayer.myTurn) {
-            textPanel.setBorder(new TitledBorder("Type an English word containing: " + client.game.prompt));
+            client.im.enable();
         } else {
-            textPanel.removeAll();
-            textPanel.setBorder(null);
+            client.im.disable();
         }
 
         timer.setValue(client.game.timer);
@@ -92,18 +97,13 @@ public class ClientUI extends JPanel {
             player.updatePanel();
         }
 
-        bonusLettersPanel.removeAll();
-        Globals.BONUS_LETTERS.chars().forEachOrdered(c -> {
-            String letter = String.valueOf((char)c);
+        for (int i = 0; i < Globals.BONUS_LETTERS.length(); i++) {
+            String letter = String.valueOf(Globals.BONUS_LETTERS.charAt(i));
             boolean containsLetter = myPlayer.bonusLetters.contains(letter);
-            JLabel label = new JLabel(letter);
-            label.setOpaque(true);
+            Component label = bonusLettersPanel.getComponent(i);
             label.setBackground(containsLetter ? Color.darkGray : Color.lightGray);
             label.setForeground(containsLetter ? Color.lightGray : Color.black);
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-            bonusLettersPanel.add(label);
-        });
+        }
 
         repaint();
         revalidate();
