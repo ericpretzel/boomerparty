@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.concurrent.Executors;
 
 public class ClientManager {
 
@@ -36,11 +37,12 @@ public class ClientManager {
             public void windowClosing(WindowEvent e) {
                 if (JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?",
                         "Exit", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    fr.dispose();
                     disconnect();
                 }
             }
         });
-        fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        fr.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         fr.pack();
         fr.setLocationRelativeTo(null);
         fr.setVisible(true);
@@ -49,13 +51,7 @@ public class ClientManager {
     }
 
     public void connect() throws IOException {
-        Socket server = null;
-        try {
-            server = new Socket(ip, portNumber);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Could not connect to server.");
-            System.exit(0);
-        }
+        Socket server = new Socket(ip, portNumber);
 
         Logger.log("successfully connected to server " + ip + " on port " + portNumber);
 
@@ -65,8 +61,8 @@ public class ClientManager {
         Logger.log("sending username");
         send(username);
 
-        Thread receiving = new Thread(() -> {
-            while (true) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            while (server.isConnected()) {
                 Game game = (Game) receive();
                 //update game info
                 this.game.copy(game);
@@ -75,9 +71,7 @@ public class ClientManager {
 
                 SwingUtilities.invokeLater(sc::updateInfo);
             }
-
         });
-        receiving.start();
     }
 
     public void disconnect() {

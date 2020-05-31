@@ -1,10 +1,14 @@
 package server;
 
+import game.ServerInstructions;
+
 import javax.swing.*;
 import java.net.UnknownHostException;
 
 public class Server {
     public static void main(String[] args) throws UnknownHostException {
+        ServerInstructions.show();
+
         JPanel portPanel = new JPanel();
 
         portPanel.add(new JLabel("Port:"));

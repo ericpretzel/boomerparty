@@ -13,13 +13,12 @@ import java.util.concurrent.Executors;
 
 public class WordManager {
 
-    private static final HashTable<String> dictionary = new HashTable<>(750000);
+    private static final int numLines = 273278;
+    private static final HashTable<String> dictionary = new HashTable<>((int) (numLines * 1.25));
 
     static /*loadWords*/ {
-        final int num = 450827; //this is the number of lines in words.txt
-
         JFrame fr = new JFrame();
-        JProgressBar bar = new JProgressBar(JProgressBar.CENTER, 0, num);
+        JProgressBar bar = new JProgressBar(JProgressBar.CENTER, 0, numLines);
         bar.setBorder(new TitledBorder("Loading words.txt..."));
         fr.add(bar);
         fr.pack();

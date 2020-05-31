@@ -29,11 +29,12 @@ public class ServerThread extends Thread {
             public void windowClosing(WindowEvent e) {
                 if (JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?",
                         "Exit", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    fr.dispose();
                     System.exit(0);
                 }
             }
         });
-        fr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        fr.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         fr.pack();
         fr.setLocationRelativeTo(null);
         fr.setVisible(true);

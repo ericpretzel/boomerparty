@@ -7,7 +7,7 @@ import javax.swing.border.TitledBorder;
 import java.io.IOException;
 
 public class Client {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ClientInstructions.show();
 
         JPanel clientPanel = new JPanel();
@@ -42,7 +42,14 @@ public class Client {
                 showErrorPane();
             }
 
-            new ClientManager(username, ip, port).connect();
+            try {
+                new ClientManager(username, ip, port).connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Lost connection to server.");
+                System.exit(0);
+            }
+
         } else {
             System.exit(0);
         }
