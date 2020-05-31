@@ -6,9 +6,12 @@ public class HashMap<K, V> implements java.io.Serializable {
 
     private static final float loadFactor = 0.75F;
 
-    private final Object[] table;
+    private Object[] table;
 
     private final DLList<K> keys;
+
+    @SuppressWarnings("unchecked")
+    private final Node nullNode = new Node((K) new Object(), null);
 
     class Node {
         Node(K key, V val) {
@@ -27,7 +30,9 @@ public class HashMap<K, V> implements java.io.Serializable {
     }
 
     public HashMap(int size) {
-        table = new Object[size];
+        //don't rly know why this works but that's how they do it in java.util.HashMap :)
+        int n = -1 >>> Integer.numberOfLeadingZeros(size - 1);
+        table = new Object[n + 1];
         keys = new DLList<>();
     }
 
@@ -39,34 +44,63 @@ public class HashMap<K, V> implements java.io.Serializable {
     public void put(K key, V val) {
         if (!keys.contains(key)) keys.add(key);
 
-
-        int i = index(key);
+        int i = indexFor(key);
         if (table[i] == null) {
             table[i] = new Node(key, val);
-            return;
+        } else {
+            Node current = (Node) table[i];
+            boolean put = false;
+            while (current.next != null) {
+                if (key.equals(current.key)) {
+                    current.val = val;
+                    put = true;
+                }
+                current = current.next;
+            }
+            if (!put)
+                current.next = new Node(key, val);
         }
 
-        Node current = (Node) table[i];
+        if ((double)size() / table.length > loadFactor) {
+            rehash();
+        }
+    }
+
+
+    public V get(K key) {
+        return getNode(key).val;
+    }
+    @SuppressWarnings("unchecked")
+    private Node getNode(K key) {
+        Node current = (Node) table[indexFor(key)];
         while (current != null) {
-            if (key.equals(current.key)) {
-                current.val = val;
-                return;
-            }
+            if (current.key.equals(key))
+                return current;
             current = current.next;
         }
-        current.next = new Node(key, val);
-
+        return nullNode;
     }
 
     @SuppressWarnings("unchecked")
-    public V get(K key) {
-        Node current = (Node) table[index(key)];
-        while (current != null) {
-            if (current.key.equals(key))
-                return current.val;
-            current = current.next;
+    private void rehash() {
+        Object[] newTable = new Object[table.length << 1];
+
+        for (K key : this.getKeys()) {
+            Node node = getNode(key);
+
+            int i = indexFor(node, newTable.length);
+
+            if (newTable[i] == null) {
+                newTable[i] = node;
+            } else {
+                Node current = (Node) newTable[i];
+                while (current.next != null) {
+                    current = current.next;
+                }
+                current.next = node;
+            }
         }
-        return null;
+        this.table = newTable;
     }
 
     public DLList<K> getKeys() {
@@ -77,14 +111,23 @@ public class HashMap<K, V> implements java.io.Serializable {
         return keys.size();
     }
 
-    private int index(K key) {
-        return Math.abs(key.hashCode() % table.length);
+    private int indexFor(K key) {
+        return indexFor(key, table.length);
+    }
+    private int indexFor(K key, int length) {
+        return Math.abs(key.hashCode() % length);
+    }
+    private int indexFor(Node node) {
+        return indexFor(node, table.length);
+    }
+    private int indexFor(Node node, int length) {
+        return Math.abs(node.hash % length);
     }
 
     public String toString() {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < keys.size(); i++) {
-            result.append(keys.get(i).toString()).append(" : ").append(get(keys.get(i)).toString());
+            result.append(keys.get(i).toString()).append(" : ").append(get(keys.get(i)).toString()).append("\n");
         }
         return result.toString();
     }
